@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements Runnable{
 
   }
 
+  //
   public void startGameThread() {
     gameThread = new Thread(this);
     gameThread.start();

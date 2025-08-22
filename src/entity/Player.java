@@ -13,9 +13,9 @@ public class Player extends Entity {
 
   GamePanel gp;
   KeyHandler keyH;
-
   public final int screenX;
   public final int screenY;
+  int standCounter = 0;
 
   public Player(GamePanel gp, KeyHandler keyH) {
     this.gp = gp;
@@ -77,7 +77,7 @@ public class Player extends Entity {
         worldX += speed;
       }
 
-      //Sprite Changer. A cada 12 frames troca de sprite
+      //Sprite Changer. A cada 13 frames troca de sprite
       spriteCounter++;
       if (spriteCounter > 13) {
         if (spriteNum == 1) {
@@ -86,6 +86,13 @@ public class Player extends Entity {
           spriteNum = 1;
         }
         spriteCounter = 0;
+      }
+    }
+    else {
+      standCounter++;
+      if (standCounter == 20) {
+        spriteNum = 1;
+        standCounter = 0;
       }
     }
   }
