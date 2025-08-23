@@ -17,6 +17,10 @@ public class Player extends Entity {
   public final int screenY;
   int standCounter = 0;
 
+  // Movimentação por grid
+  boolean moving = false;
+  int pixelCounter = 0;
+
   public Player(GamePanel gp, KeyHandler keyH) {
     this.gp = gp;
     this.keyH = keyH;
@@ -26,10 +30,10 @@ public class Player extends Entity {
 
     // Area de colisão do jogador 32x32 ao invés de 48x48
     solidArea = new Rectangle();
-    solidArea.x = 8;
-    solidArea.y = 16;
-    solidArea.width = 32;
-    solidArea.height = 32;
+    solidArea.x = 1;
+    solidArea.y = 1;
+    solidArea.width = 46;
+    solidArea.height = 46;
 
     setDefaultValues();
     getPlayerImage();
@@ -38,7 +42,7 @@ public class Player extends Entity {
   public void setDefaultValues() {
     worldX = gp.tileSize * 23;
     worldY = gp.tileSize * 21;
-    speed = 10;
+    speed = 4;
     directions = "down";
   }
 
@@ -68,23 +72,40 @@ public class Player extends Entity {
   }
 
   public void update() {
-    if (keyH.upPressed  || keyH.downPressed || keyH.leftPressed || keyH.rightPressed ) {
 
-      if (keyH.upPressed) {
-        directions = "up";
-      } else if (keyH.downPressed) {
-        directions = "down";
-      } else if (keyH.leftPressed) {
-        directions = "left";
-      } else if (keyH.rightPressed) {
-        directions = "right";
+    // Movimentação baseada por tile/grid/sqm
+    if (moving == false) {
+
+      // Movimentação normal
+      if (keyH.upPressed  || keyH.downPressed || keyH.leftPressed || keyH.rightPressed ) {
+
+        if (keyH.upPressed) {
+          directions = "up";
+        } else if (keyH.downPressed) {
+          directions = "down";
+        } else if (keyH.leftPressed) {
+          directions = "left";
+        } else if (keyH.rightPressed) {
+          directions = "right";
+        }
+
+        moving = true;
+
+        // Check tile collision
+        collisionOn = false;
+        gp.cChecker.checkTile(this);
+      } else {
+        standCounter++;
+        if (standCounter == 20) {
+          spriteNum = 1;
+          standCounter = 0;
+        }
       }
+    }
 
-      // Check tile collision
-      collisionOn = false;
-      gp.cChecker.checkTile(this);
+    if (moving) {
 
-      // If collision si false, player can move
+      // If collision is false, player can move
       if (!collisionOn) {
         switch (directions) {
           case "up":
@@ -112,12 +133,12 @@ public class Player extends Entity {
         }
         spriteCounter = 0;
       }
-    }
-    else {
-      standCounter++;
-      if (standCounter == 20) {
-        spriteNum = 1;
-        standCounter = 0;
+
+      pixelCounter += speed;
+
+      if (pixelCounter == 48) {
+        moving = false;
+        pixelCounter = 0;
       }
     }
   }

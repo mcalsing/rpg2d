@@ -42,7 +42,7 @@ public class GamePanel extends JPanel implements Runnable{
     // Game Rendering performance
     this.setDoubleBuffered(true);
 
-    //movimentação do personagem
+    //Movimentação do personagem
     this.addKeyListener(keyH);
     this.setFocusable(true);
 
