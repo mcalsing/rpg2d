@@ -14,5 +14,6 @@ public class ObjectDoor extends SuperObject {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+    collision = true;
   }
 }

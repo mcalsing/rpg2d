@@ -17,6 +17,8 @@ public class Player extends Entity {
   public final int screenY;
   int standCounter = 0;
 
+  int  hasKey = 0;
+
   // Movimentação por grid
   boolean moving = false;
   int pixelCounter = 0;
@@ -32,6 +34,8 @@ public class Player extends Entity {
     solidArea = new Rectangle();
     solidArea.x = 1;
     solidArea.y = 1;
+    solidAreaDefaultX = solidArea.x;
+    solidAreaDefaultY = solidArea.y;
     solidArea.width = 46;
     solidArea.height = 46;
 
@@ -103,6 +107,10 @@ public class Player extends Entity {
       }
     }
 
+    // Check object collision
+    int objIndex =  gp.cChecker.checkObject(this, true);
+    pickUpObject(objIndex);
+
     if (moving) {
 
       // If collision is false, player can move
@@ -139,6 +147,28 @@ public class Player extends Entity {
       if (pixelCounter == 48) {
         moving = false;
         pixelCounter = 0;
+      }
+    }
+  }
+
+  public void pickUpObject(int i) {
+
+    if (i != 999) {
+      String objectName = gp.obj[i].name;
+
+      switch (objectName) {
+        case "Key":
+          hasKey++;
+          gp.obj[i] = null;
+          System.out.println("Key: " +hasKey);
+          break;
+        case "Door":
+          if (hasKey > 0) {
+            gp.obj[i] = null;
+            hasKey--;
+          }
+          System.out.println("Key: " +hasKey);
+          break;
       }
     }
   }
