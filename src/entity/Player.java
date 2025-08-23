@@ -24,6 +24,13 @@ public class Player extends Entity {
     screenX = gp.screenWidth/2 - (gp.tileSize/2);
     screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
+    // Area de colisão do jogador 32x32 ao invés de 48x48
+    solidArea = new Rectangle();
+    solidArea.x = 8;
+    solidArea.y = 16;
+    solidArea.width = 32;
+    solidArea.height = 32;
+
     setDefaultValues();
     getPlayerImage();
   }
@@ -65,16 +72,34 @@ public class Player extends Entity {
 
       if (keyH.upPressed) {
         directions = "up";
-        worldY -= speed;
       } else if (keyH.downPressed) {
         directions = "down";
-        worldY += speed;
       } else if (keyH.leftPressed) {
         directions = "left";
-        worldX -= speed;
       } else if (keyH.rightPressed) {
         directions = "right";
-        worldX += speed;
+      }
+
+      // Check tile collision
+      collisionOn = false;
+      gp.cChecker.checkTile(this);
+
+      // If collision si false, player can move
+      if (!collisionOn) {
+        switch (directions) {
+          case "up":
+            worldY -= speed;
+            break;
+          case "down":
+            worldY += speed;
+            break;
+          case "left":
+            worldX -= speed;
+            break;
+          case "right":
+            worldX += speed;
+            break;
+        }
       }
 
       //Sprite Changer. A cada 13 frames troca de sprite
