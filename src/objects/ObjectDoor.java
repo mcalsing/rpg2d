@@ -1,19 +1,15 @@
 package objects;
 
-import javax.imageio.ImageIO;
-import java.util.Objects;
+import entity.Entity;
+import main.GamePanel;
 
-public class ObjectDoor extends SuperObject {
+public class ObjectDoor extends Entity {
 
-  public ObjectDoor() {
+  public ObjectDoor(GamePanel gp) {
+    super(gp);
+
     name = "Door";
-
-    try {
-      image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/door.png")));
-
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    down1 = setup("/objects/door");
     collision = true;
   }
 }

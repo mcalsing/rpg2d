@@ -1,18 +1,20 @@
 package objects;
 
-import javax.imageio.ImageIO;
-import java.util.Objects;
+import entity.Entity;
+import main.GamePanel;
 
-public class ObjectKey extends SuperObject {
+public class ObjectKey extends Entity {
 
-  public ObjectKey() {
+
+  public ObjectKey(GamePanel gp) {
+    super(gp);
+
     name = "Key";
+    down1 = setup("/objects/key");
 
-    try {
-      image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/key.png")));
-
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    // ao inves de "down1..." no corações de vida, colocar as 3 linhas abaixo
+    //image = setup("/objects/chest.png");
+    //image1 = setup("/objects/chest.png");
+    //image2 = setup("/objects/chest.png");
   }
 }

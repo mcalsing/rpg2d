@@ -1,11 +1,12 @@
 package main;
 
+import entity.Entity;
 import entity.Player;
-import objects.SuperObject;
 import tile.TileManager;
 
 import javax.swing.JPanel;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -36,7 +37,10 @@ public class GamePanel extends JPanel implements Runnable{
   public AssetSetter aSetter = new AssetSetter(this);
   public Player player = new Player(this,keyH);
 
-  public SuperObject obj[] = new SuperObject[10];
+  public Entity obj[] = new Entity[10];
+  public Entity npc[] = new Entity[10];
+  ArrayList<Entity> entityList = new ArrayList<>();
+
 
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -51,6 +55,7 @@ public class GamePanel extends JPanel implements Runnable{
 
   public void setupGame() {
     aSetter.setObjects();
+    aSetter.setNPC();
   }
 
   //
@@ -94,6 +99,11 @@ public class GamePanel extends JPanel implements Runnable{
   public void update() {
     player.update();
 
+    for (int i = 0; i < npc.length; i++) {
+      if (npc[i] != null) {
+        npc[i].update();
+      }
+    }
   }
 
   public void paintComponent(Graphics g) {
@@ -113,7 +123,14 @@ public class GamePanel extends JPanel implements Runnable{
     //Object
     for (int i = 0; i < obj.length; i++) {
       if (obj[i] != null) {
-        obj[i].draw(g2, this);
+        entityList.add(obj[i]);
+      }
+    }
+
+    //NPC
+    for (int i = 0; i < npc.length; i++) {
+      if (npc[i] != null) {
+        npc[i].draw(g2);
       }
     }
 
