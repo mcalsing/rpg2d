@@ -5,7 +5,6 @@ import main.GamePanel;
 
 public class ObjectKey extends Entity {
 
-
   public ObjectKey(GamePanel gp) {
     super(gp);
 

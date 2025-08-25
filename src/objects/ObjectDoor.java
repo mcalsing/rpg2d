@@ -11,5 +11,7 @@ public class ObjectDoor extends Entity {
     name = "Door";
     down1 = setup("/objects/door");
     collision = true;
+
+    //solidArea.x = 0
   }
 }
