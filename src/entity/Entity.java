@@ -61,7 +61,7 @@ public class Entity {
 
     //Sprite Changer. A cada 13 frames troca de sprite
     spriteCounter++;
-    if (spriteCounter > 13) {
+    if (spriteCounter > 12) {
       if (spriteNum == 1) {
         spriteNum = 2;
       } else if (spriteNum == 2) {
@@ -77,9 +77,10 @@ public class Entity {
     int screenX = worldX - gp.player.worldX + gp.player.screenX;
     int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-    if(worldX + gp.tileSize > gp.player.worldX - gp.player.screenX && worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
-            worldY + gp.tileSize > gp.player.worldY - gp.player.screenY && worldY - gp.tileSize < gp.player.worldY + gp.player.screenY)  {
-
+    if(worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+       worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+       worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+       worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
 
       switch(directions) {
         case "up":
@@ -102,7 +103,6 @@ public class Entity {
 
       g2.drawImage(image, screenX, screenY, null);
     }
-
   }
 
   public BufferedImage setup(String imagePath) {

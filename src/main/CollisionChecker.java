@@ -2,6 +2,8 @@ package main;
 
 import entity.Entity;
 
+import java.awt.*;
+
 public class CollisionChecker {
 
   GamePanel gp;
@@ -12,47 +14,69 @@ public class CollisionChecker {
 
   public void checkTile(Entity entity) {
 
-    int entityLeftWorldX = entity.worldX + entity.solidArea.x;
-    int entityRightWorldX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
-    int entityTopWorldY = entity.worldY + entity.solidArea.y;
-    int entityBottomWorldY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
+    // Criar cópia da área sólida da entidade
+    Rectangle entityArea = new Rectangle(
+      entity.worldX + entity.solidArea.x,
+      entity.worldY + entity.solidArea.y,
+      entity.solidArea.width,
+      entity.solidArea.height
+    );
 
-    int entityLeftCol = entityLeftWorldX/gp.tileSize;
-    int entityRightCol = entityRightWorldX/gp.tileSize;
-    int entityTopRow = entityTopWorldY/gp.tileSize;
-    int entityBottomRow = entityBottomWorldY/gp.tileSize;
-
+    int entityLeftCol, entityRightCol, entityTopRow, entityBottomRow;
     int tileNum1, tileNum2;
 
     switch (entity.directions) {
       case "up":
-        entityTopRow = (entityTopWorldY - entity.speed) / gp.tileSize;
+        entityArea.y  -= entity.speed;
+        entityLeftCol  = entityArea.x / gp.tileSize;
+        entityRightCol = (entityArea.x + entityArea.width) / gp.tileSize;
+        entityTopRow   = entityArea.y / gp.tileSize;
+
         tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
         tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
+
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
         }
         break;
+
       case "down":
-        entityBottomRow = (entityBottomWorldY + entity.speed) / gp.tileSize;
+        entityArea.y   += entity.speed;
+        entityLeftCol   = entityArea.x / gp.tileSize;
+        entityRightCol  = (entityArea.x + entityArea.width) / gp.tileSize;
+        entityBottomRow = (entityArea.y + entityArea.height) / gp.tileSize;
+
         tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
         tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
         }
         break;
+
       case "left":
-        entityLeftCol = (entityLeftWorldX - entity.speed) / gp.tileSize;
+        entityArea.x   -= entity.speed;
+        entityLeftCol   = entityArea.x / gp.tileSize;
+        entityTopRow    = entityArea.y / gp.tileSize;
+        entityBottomRow = (entityArea.y + entityArea.height) / gp.tileSize;
+
         tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
         tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
+
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
         }
         break;
+
       case "right":
-        entityRightCol = (entityRightWorldX + entity.speed) / gp.tileSize;
+        entityArea.x   += entity.speed;
+        entityRightCol  = (entityArea.x + entityArea.width) / gp.tileSize;
+        entityTopRow    = entityArea.y / gp.tileSize;
+        entityBottomRow = (entityArea.y + entityArea.height) / gp.tileSize;
+
         tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
         tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
         }
@@ -63,127 +87,87 @@ public class CollisionChecker {
     int index = 999;
 
     for (int i = 0; i < gp.obj.length; i++) {
-
       if (gp.obj[i] != null) {
 
-        //Pegar a area solida da entidade
-        entity.solidArea.x = entity.worldX + entity.solidArea.x;
-        entity.solidArea.y = entity.worldY + entity.solidArea.y;
+        // Criar cópia temporária da área sólida da entidade
+        Rectangle entityArea = new Rectangle(
+          entity.worldX + entity.solidArea.x,
+          entity.worldY + entity.solidArea.y,
+          entity.solidArea.width,
+          entity.solidArea.height
+        );
 
-        //Pegar a posição da area solida do objeto
-        gp.obj[i].solidArea.x = gp.obj[i].worldX + gp.obj[i].solidArea.x;
-        gp.obj[i].solidArea.y = gp.obj[i].worldY + gp.obj[i].solidArea.y;
+        // Criar cópia temporária da área sólida do objeto
+        Rectangle objectArea = new Rectangle(
+          gp.obj[i].worldX + gp.obj[i].solidArea.x,
+          gp.obj[i].worldY + gp.obj[i].solidArea.y,
+          gp.obj[i].solidArea.width,
+          gp.obj[i].solidArea.height
+        );
 
-        // Checa as diferentes direções da colisão
+        // Checa colisão em cada direção usando apenas a cópia
         switch (entity.directions) {
           case "up":
-            entity.solidArea.y -= entity.speed;
-            if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
-              if (gp.obj[i].collision) {
-                entity.collisionOn = true;
-              }
-              if (player) {
-                index = i;
-              }
-            }
+            entityArea.y -= entity.speed;
             break;
           case "down":
-            entity.solidArea.y += entity.speed;
-            if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
-              if (gp.obj[i].collision) {
-                entity.collisionOn = true;
-              }
-              if (player) {
-                index = i;
-              }
-            }
+            entityArea.y += entity.speed;
             break;
           case "left":
-            entity.solidArea.x -= entity.speed;
-            if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
-              if (gp.obj[i].collision) {
-                entity.collisionOn = true;
-              }
-              if (player) {
-                index = i;
-              }
-            }
+            entityArea.x -= entity.speed;
             break;
           case "right":
-            entity.solidArea.x += entity.speed;
-            if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
-              if (gp.obj[i].collision) {
-                entity.collisionOn = true;
-              }
-              if (player) {
-                index = i;
-              }
-            }
+            entityArea.x += entity.speed;
             break;
         }
-        entity.solidArea.x = entity.solidAreaDefaultX;
-        entity.solidArea.y = entity.solidAreaDefaultY;
-        gp.obj[i].solidArea.x = gp.obj[i].solidAreaDefaultX;
-        gp.obj[i].solidArea.y = gp.obj[i].solidAreaDefaultY;
 
+        if (entityArea.intersects(objectArea)) {
+          if (gp.obj[i].collision) {
+            entity.collisionOn = true;
+          }
+          if (player) {
+            index = i;
+          }
+        }
       }
     }
     return index;
   }
 
-  //Colisao do jogador com NPC ou monster
+  //Colisao do jogador com NPC ou monstro
   public int checkEntity(Entity entity, Entity[] target) {
-
     int index = 999;
 
     for (int i = 0; i < target.length; i++) {
-
       if (target[i] != null) {
 
-        //Pegar a area solida da entidade
-        entity.solidArea.x = entity.worldX + entity.solidArea.x;
-        entity.solidArea.y = entity.worldY + entity.solidArea.y;
+        // Área temporária da entidade
+        Rectangle entityArea = new Rectangle(
+          entity.worldX + entity.solidArea.x,
+          entity.worldY + entity.solidArea.y,
+          entity.solidArea.width,
+          entity.solidArea.height
+        );
 
-        //Pegar a posição da area solida do objeto
-        target[i].solidArea.x = target[i].worldX + target[i].solidArea.x;
-        target[i].solidArea.y = target[i].worldY + target[i].solidArea.y;
+        // Área temporária do target
+        Rectangle targetArea = new Rectangle(
+          target[i].worldX + target[i].solidArea.x,
+          target[i].worldY + target[i].solidArea.y,
+          target[i].solidArea.width,
+          target[i].solidArea.height
+        );
 
-        // Checa as diferentes direções da colisão
         switch (entity.directions) {
-          case "up":
-            entity.solidArea.y -= entity.speed;
-            if (entity.solidArea.intersects(target[i].solidArea)) {
-              entity.collisionOn = true;
-              index = i;
-            }
-            break;
-          case "down":
-            entity.solidArea.y += entity.speed;
-            if (entity.solidArea.intersects(target[i].solidArea)) {
-              entity.collisionOn = true;
-              index = i;
-            }
-            break;
-          case "left":
-            entity.solidArea.x -= entity.speed;
-            if (entity.solidArea.intersects(target[i].solidArea)) {
-              entity.collisionOn = true;
-              index = i;
-            }
-            break;
-          case "right":
-            entity.solidArea.x += entity.speed;
-            if (entity.solidArea.intersects(target[i].solidArea)) {
-              entity.collisionOn = true;
-              index = i;
-            }
-            break;
+          case "up":    entityArea.y -= entity.speed; break;
+          case "down":  entityArea.y += entity.speed; break;
+          case "left":  entityArea.x -= entity.speed; break;
+          case "right": entityArea.x += entity.speed; break;
         }
-        entity.solidArea.x = entity.solidAreaDefaultX;
-        entity.solidArea.y = entity.solidAreaDefaultY;
-        target[i].solidArea.x = target[i].solidAreaDefaultX;
-        target[i].solidArea.y = target[i].solidAreaDefaultY;
 
+        if (entityArea.intersects(targetArea)) {
+          entity.collisionOn = true;
+          index = i;
+        }
       }
     }
     return index;
@@ -191,47 +175,31 @@ public class CollisionChecker {
 
   //Colisao do npc com o jogador
   public void checkPlayer(Entity entity) {
+    // Área temporária da entidade
+    Rectangle entityArea = new Rectangle(
+      entity.worldX + entity.solidArea.x,
+      entity.worldY + entity.solidArea.y,
+      entity.solidArea.width,
+      entity.solidArea.height
+    );
 
-    //Pegar a area solida da entidade
-    entity.solidArea.x = entity.worldX + entity.solidArea.x;
-    entity.solidArea.y = entity.worldY + entity.solidArea.y;
+    // Área temporária do player
+    Rectangle playerArea = new Rectangle(
+      gp.player.worldX + gp.player.solidArea.x,
+      gp.player.worldY + gp.player.solidArea.y,
+      gp.player.solidArea.width,
+      gp.player.solidArea.height
+    );
 
-    //Pegar a posição da area solida do objeto
-    gp.player.solidArea.x = gp.player.worldX + gp.player.solidArea.x;
-    gp.player.solidArea.y = gp.player.worldY + gp.player.solidArea.y;
-
-    // Checa as diferentes direções da colisão
     switch (entity.directions) {
-      case "up":
-        entity.solidArea.y -= entity.speed;
-        if (entity.solidArea.intersects(gp.player.solidArea)) {
-          entity.collisionOn = true;
-        }
-        break;
-      case "down":
-        entity.solidArea.y += entity.speed;
-        if (entity.solidArea.intersects(gp.player.solidArea)) {
-          entity.collisionOn = true;
-        }
-        break;
-      case "left":
-        entity.solidArea.x -= entity.speed;
-        if (entity.solidArea.intersects(gp.player.solidArea)) {
-          entity.collisionOn = true;
-        }
-        break;
-      case "right":
-        entity.solidArea.x += entity.speed;
-        if (entity.solidArea.intersects(gp.player.solidArea)) {
-          entity.collisionOn = true;
-        }
-        break;
+      case "up":    entityArea.y -= entity.speed; break;
+      case "down":  entityArea.y += entity.speed; break;
+      case "left":  entityArea.x -= entity.speed; break;
+      case "right": entityArea.x += entity.speed; break;
     }
-    entity.solidArea.x = entity.solidAreaDefaultX;
-    entity.solidArea.y = entity.solidAreaDefaultY;
-    gp.player.solidArea.x = gp.player.solidAreaDefaultX;
-    gp.player.solidArea.y = gp.player.solidAreaDefaultY;
 
+    if (entityArea.intersects(playerArea)) {
+      entity.collisionOn = true;
+    }
   }
-
 }

@@ -37,13 +37,12 @@ public class GamePanel extends JPanel implements Runnable{
 
   public CollisionChecker cChecker = new CollisionChecker(this);
   public AssetSetter aSetter = new AssetSetter(this);
+
+  // Entity and objects
   public Player player = new Player(this,keyH);
-
-
   public Entity obj[] = new Entity[10];
   public Entity npc[] = new Entity[10];
   ArrayList<Entity> entityList = new ArrayList<>();
-
 
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -122,9 +121,6 @@ public class GamePanel extends JPanel implements Runnable{
 
     //Add entities to the list
     entityList.add(player);
-
-    //Player
-    //player.draw(g2);
 
     //NPC
     for (int i = 0; i < npc.length; i++) {

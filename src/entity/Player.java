@@ -11,7 +11,6 @@ import java.util.Objects;
 
 public class Player extends Entity {
 
-  //GamePanel gp;
   KeyHandler keyH;
   public final int screenX;
   public final int screenY;
@@ -25,7 +24,6 @@ public class Player extends Entity {
 
   public Player(GamePanel gp, KeyHandler keyH) {
     super(gp);
-    //this.gp = gp;
     this.keyH = keyH;
 
     screenX = gp.screenWidth/2 - (gp.tileSize/2);
@@ -116,7 +114,7 @@ public class Player extends Entity {
 
       //Sprite Changer. A cada 13 frames troca de sprite
       spriteCounter++;
-      if (spriteCounter > 13) {
+      if (spriteCounter > 12) {
         if (spriteNum == 1) {
           spriteNum = 2;
         } else if (spriteNum == 2) {
