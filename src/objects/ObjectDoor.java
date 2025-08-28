@@ -13,9 +13,9 @@ public class ObjectDoor extends Entity {
     collision = true;
 
     solidArea.x = 0;
-    solidArea.y = 0; //16
+    solidArea.y = 0; //16 ou 0
     solidArea.width = 48;
-    solidArea.height = 48; //32
+    solidArea.height = 48; //32 ou 48
     solidAreaDefaultX = solidArea.x;
     solidAreaDefaultY = solidArea.y;
   }

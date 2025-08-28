@@ -107,18 +107,10 @@ public class CollisionChecker {
 
         // Checa colisão em cada direção usando apenas a cópia
         switch (entity.directions) {
-          case "up":
-            entityArea.y -= entity.speed;
-            break;
-          case "down":
-            entityArea.y += entity.speed;
-            break;
-          case "left":
-            entityArea.x -= entity.speed;
-            break;
-          case "right":
-            entityArea.x += entity.speed;
-            break;
+          case "up":    entityArea.y -= entity.speed; break;
+          case "down":  entityArea.y += entity.speed; break;
+          case "left":  entityArea.x -= entity.speed; break;
+          case "right": entityArea.x += entity.speed; break;
         }
 
         if (entityArea.intersects(objectArea)) {
@@ -165,6 +157,9 @@ public class CollisionChecker {
         }
 
         if (entityArea.intersects(targetArea)) {
+          //if (targetArea != entity) {
+
+          //}
           entity.collisionOn = true;
           index = i;
         }
