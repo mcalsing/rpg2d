@@ -160,6 +160,10 @@ public class CollisionChecker {
         }
 
         if (entityArea.intersects(targetArea)) {
+          if (target == gp.monster) {
+            gp.startBattle(target[gp.currentMap][i]);
+            //return i; // Retorna imediatamente após iniciar a batalha
+          }
           //eventHandler.teleport(3, 8, 11);
           entity.collisionOn = true;
           index = i;

@@ -52,6 +52,14 @@ public class GamePanel extends JPanel implements Runnable {
   public final int pauseState = 2;
   public final int dialogState = 3;
   public final int characterState = 4;
+  public final int battleState = 5;
+  public final int battleTransitionState = 6;
+
+  // Variáveis para batalha
+  public Entity battleMonster = null;
+  public int previousMap = 0;
+  public int previousPlayerX = 0;
+  public int previousPlayerY = 0;
 
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -59,6 +67,8 @@ public class GamePanel extends JPanel implements Runnable {
     this.setDoubleBuffered(true);
     this.addKeyListener(keyH);
     this.setFocusable(true);
+
+    gameState = playState;
   }
 
   public void setupGame() {
@@ -66,13 +76,15 @@ public class GamePanel extends JPanel implements Runnable {
     aSetter.setNPC();
     aSetter.setMonster();
 
+    // Garantir que começa no estado de jogo
+    gameState = playState;
+
     System.out.println("Monstros no mapa 0:");
     for (int i = 0; i < monster[0].length; i++) {
       if (monster[0][i] != null) {
         System.out.println("Índice " + i + ": " + monster[0][i].getClass().getSimpleName());
       }
     }
-
   }
 
   public void startGameThread() {
@@ -101,12 +113,69 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   public void update() {
-    player.update();
+    // Metodo de jogo
+    if (gameState == playState) {
+      player.update();
 
-    for (int i = 0; i < monster[currentMap].length; i++) {
-      if (monster[currentMap][i] != null) {
-        monster[currentMap][i].update();
+      for (int i = 0; i < monster[currentMap].length; i++) {
+        if (monster[currentMap][i] != null) {
+          monster[currentMap][i].update();
+        }
       }
+    }
+
+    if (gameState == battleState) {
+      // Lógica de batalha
+      updateBattle();
+    }
+  }
+
+  public void startBattle(Entity monster) {
+    // Salvar estado atual
+    previousMap = currentMap;
+    previousPlayerX = player.worldX;
+    previousPlayerY = player.worldY;
+    battleMonster = monster;
+
+    // Mudar para estado de batalha
+    gameState = battleState;
+
+    // Teleportar para mapa de batalha (sem afetar o array de monstros)
+    //eHandler.teleport(3, 8, 11);
+  }
+
+  public void endBattle(boolean playerWon) {
+    if (playerWon) {
+      // Remover monstro derrotado do mapa original
+      removeMonsterFromMap(battleMonster);
+      System.out.println("Você venceu a batalha!");
+    }
+
+    // Usar o eventHandler para voltar ao mapa anterior
+    eHandler.returnFromBattle(previousMap, previousPlayerX, previousPlayerY);
+
+
+    // Voltar ao jogo normal
+    gameState = playState;
+    battleMonster = null;
+  }
+
+  private void removeMonsterFromMap(Entity monster) {
+    for (int i = 0; i < this.monster[previousMap].length; i++) {
+      if (this.monster[previousMap][i] == monster) {
+        this.monster[previousMap][i] = null;
+        break;
+      }
+    }
+  }
+
+  private void updateBattle() {
+    // Implementar lógica de batalha por turnos aqui
+    // Por enquanto uma batalha simples
+    if (keyH.enterPressed) {
+      // Simular vitória do jogador
+      endBattle(true);
+      keyH.enterPressed = false;
     }
   }
 
@@ -115,37 +184,40 @@ public class GamePanel extends JPanel implements Runnable {
     super.paintComponent(g);
     Graphics2D g2 = (Graphics2D) g;
 
-    //debug
-    long drawStart = 0;
-    if (keyH.showDebugText) drawStart = System.nanoTime();
+    if (gameState == playState) {
 
-    tileM.draw(g2);
+      //debug
+      long drawStart = 0;
+      if (keyH.showDebugText) drawStart = System.nanoTime();
 
-    // Entidades organizadas
-    buildEntityList();
-    Collections.sort(entityList, Comparator.comparingInt(e -> e.worldY));
+      tileM.draw(g2);
 
-    for (Entity entity : entityList) {
-      entity.draw(g2);
+      // Entidades organizadas
+      buildEntityList();
+      Collections.sort(entityList, Comparator.comparingInt(e -> e.worldY));
+      for (Entity entity : entityList) {
+        entity.draw(g2);
+      }
+
+      //Debug
+      if (keyH.showDebugText) {
+        long drawEnd = System.nanoTime();
+        long passed = drawEnd - drawStart;
+
+        g2.setColor(Color.white);
+        int x = 10;
+
+        g2.drawString("WorldX: " + player.worldX, x, 400);
+        g2.drawString("WorldY: " + player.worldY, x, 420);
+        g2.drawString("Col: " + (player.worldX + player.solidArea.x) / tileSize, x, 440);
+        g2.drawString("Row: " + (player.worldY + player.solidArea.y) / tileSize, x, 460);
+        g2.drawString("Draw Time: " + passed, x, 480);
+      }
     }
-
-    //Debug
-    if (keyH.showDebugText) {
-      long drawEnd = System.nanoTime();
-      long passed = drawEnd - drawStart;
-
-      g2.setColor(Color.white);
-      int x = 10;
-      //int y = 400;
-      int lineHeight = 20;
-
-      g2.drawString("WorldX: " + player.worldX, x, 400);
-      g2.drawString("WorldY: " + player.worldY, x, 420);
-      g2.drawString("Col: " + (player.worldX + player.solidArea.x) / tileSize, x, 440);
-      g2.drawString("Row: " + (player.worldY + player.solidArea.y) / tileSize, x, 460);
-      g2.drawString("Draw Time: " + passed, x, 480);
+    if (gameState == battleState) {
+      // Desenhar tela de batalha
+      drawBattleScreen(g2);
     }
-
     g2.dispose();
   }
 
@@ -156,5 +228,49 @@ public class GamePanel extends JPanel implements Runnable {
     for (Entity e : npc[currentMap]) if (e != null) entityList.add(e);
     for (Entity e : obj[currentMap]) if (e != null) entityList.add(e);
     for (Entity e : monster[currentMap]) if (e != null) entityList.add(e);
+  }
+
+  private void drawBattleScreen(Graphics2D g2) {
+    // Fundo de batalha
+    g2.setColor(new Color(0, 0, 100)); // Azul escuro
+    g2.fillRect(0, 0, screenWidth, screenHeight);
+
+    // Desenhar o monstro
+    if (battleMonster != null) {
+      int monsterX = screenWidth/2 + 2 * tileSize;
+      int monsterY = screenHeight/6;
+
+      g2.drawImage(battleMonster.down1, monsterX, monsterY, tileSize*2, tileSize*2, null);
+    }
+
+    // Desenhar o jogador
+    int playerX = screenWidth/5;
+    int playerY = screenHeight/2;
+    g2.drawImage(player.up1, playerX, playerY, tileSize*2, tileSize*2, null);
+
+    // Interface de batalha
+    g2.setColor(new Color(255, 255, 255, 200));
+    g2.fillRect(0, screenHeight - 100, screenWidth, 100);
+
+    g2.setColor(Color.BLACK);
+    g2.setFont(new Font("Arial", Font.BOLD, 16));
+
+    if (battleMonster != null) {
+      g2.drawString("Você encontrou: " + battleMonster.name, 20, screenHeight - 80);
+      g2.drawString("HP: " + battleMonster.hp + "/" + battleMonster.maxHp, 20, screenHeight - 60);
+    }
+
+    g2.drawString("Pressione ENTER para atacar", 20, screenHeight - 40);
+    g2.drawString("ESC para fugir", 20, screenHeight - 20);
+
+    // Barra de HP do jogador
+    g2.setColor(Color.RED);
+    g2.fillRect(screenWidth - 150, screenHeight - 80, 100, 15);
+    g2.setColor(Color.GREEN);
+    g2.fillRect(screenWidth - 150, screenHeight - 80,
+            (int)(100 * ((double)player.hp / player.maxHp)), 15);
+
+    g2.setColor(Color.BLACK);
+    g2.drawString("HP: " + player.hp + "/" + player.maxHp, screenWidth - 150, screenHeight - 60);
   }
 }

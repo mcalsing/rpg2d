@@ -25,6 +25,9 @@ public class Entity {
   public BufferedImage image1, image2, image3;
   public String name;
   public boolean collision = false;
+  public int maxHp;
+  public int hp = maxHp;
+  public int damage;
 
   public String getName() {
     return name;

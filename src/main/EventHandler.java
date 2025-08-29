@@ -97,4 +97,10 @@ public class EventHandler {
     previousEventY = gp.player.worldY;
     canTouchEvent = false;
   }
+
+  public void returnFromBattle(int previousMap, int previousX, int previousY) {
+    gp.currentMap = previousMap;
+    gp.player.worldX = previousX;
+    gp.player.worldY = previousY;
+  }
 }

@@ -12,8 +12,8 @@ public class Orc extends Entity {
 
     name = "Orc";
     speed = 1;
-    //maxLife = 4;
-    //life = maxLife;
+    int maxHp = 4;
+    int life = maxHp;
 
     solidArea.x = 0; // 3
     solidArea.y = 0; // 18
