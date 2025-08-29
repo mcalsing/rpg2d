@@ -25,9 +25,14 @@ public class Entity {
   public BufferedImage image1, image2, image3;
   public String name;
   public boolean collision = false;
-  public int maxHp;
-  public int hp = maxHp;
-  public int damage;
+  public int hp = 20;
+  public int maxHp = 20;
+  public int mana = 50;
+  public int maxMana = 50;
+  public int strength = 10;
+  public int defense = 5;
+  public int agility = 10;
+  public int xpReward = 20;
 
   public String getName() {
     return name;

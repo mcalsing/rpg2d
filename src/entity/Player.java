@@ -29,6 +29,8 @@ public class Player extends Entity {
     screenX = gp.screenWidth/2 - (gp.tileSize/2);
     screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
+    name = "Player";
+
     // Area de colisão do jogador 32x32 ao invés de 48x48
     solidArea = new Rectangle();
     solidArea.x = 1; // 1

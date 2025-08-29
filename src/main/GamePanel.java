@@ -40,9 +40,9 @@ public class GamePanel extends JPanel implements Runnable {
 
   // Entidades
   public Player player = new Player(this, keyH);
-  public Entity obj[][] = new Entity[maxMap][20];
-  public Entity npc[][] = new Entity[maxMap][10];
-  public Entity monster[][] = new Entity[maxMap][20];
+  public Entity[][] obj = new Entity[maxMap][20];
+  public Entity[][] npc = new Entity[maxMap][10];
+  public Entity[][] monster = new Entity[maxMap][20];
   ArrayList<Entity> entityList = new ArrayList<>();
 
   // Estado do jogo
@@ -61,6 +61,9 @@ public class GamePanel extends JPanel implements Runnable {
   public int previousPlayerX = 0;
   public int previousPlayerY = 0;
 
+  // Sistema de batalha
+  public Battle battle;
+
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
     this.setBackground(Color.black);
@@ -68,6 +71,7 @@ public class GamePanel extends JPanel implements Runnable {
     this.addKeyListener(keyH);
     this.setFocusable(true);
 
+    this.battle = new Battle(this);
     gameState = playState;
   }
 
@@ -79,12 +83,12 @@ public class GamePanel extends JPanel implements Runnable {
     // Garantir que começa no estado de jogo
     gameState = playState;
 
-    System.out.println("Monstros no mapa 0:");
-    for (int i = 0; i < monster[0].length; i++) {
-      if (monster[0][i] != null) {
-        System.out.println("Índice " + i + ": " + monster[0][i].getClass().getSimpleName());
-      }
-    }
+//    System.out.println("Monstros no mapa 0:");
+//    for (int i = 0; i < monster[0].length; i++) {
+//      if (monster[0][i] != null) {
+//        System.out.println("Índice " + i + ": " + monster[0][i].getClass().getSimpleName());
+//      }
+//    }
   }
 
   public void startGameThread() {
@@ -137,10 +141,13 @@ public class GamePanel extends JPanel implements Runnable {
     previousPlayerY = player.worldY;
     battleMonster = monster;
 
+    // Iniciar batalha
+    battle.startBattle(player, monster);
+
     // Mudar para estado de batalha
     gameState = battleState;
 
-    // Teleportar para mapa de batalha (sem afetar o array de monstros)
+    // Teleportar para mapa de batalha
     //eHandler.teleport(3, 8, 11);
   }
 
@@ -172,10 +179,31 @@ public class GamePanel extends JPanel implements Runnable {
   private void updateBattle() {
     // Implementar lógica de batalha por turnos aqui
     // Por enquanto uma batalha simples
+//    if (keyH.enterPressed) {
+//      // Simular vitória do jogador
+//      endBattle(true);
+//      keyH.enterPressed = false;
+//    }
+
+    // Lógica de entrada para batalha por turnos
     if (keyH.enterPressed) {
-      // Simular vitória do jogador
-      endBattle(true);
+      battle.processTurn("ATTACK");
       keyH.enterPressed = false;
+    }
+
+    if (keyH.defendPressed) {
+      battle.processTurn("DEFEND");
+      keyH.defendPressed = false;
+    }
+
+    if (keyH.escapePressed) {
+      battle.processTurn("FLEE");
+      keyH.escapePressed = false;
+    }
+
+    if (keyH.magicPressed) {
+      battle.processTurn("MAGIC");
+      keyH.magicPressed = false;
     }
   }
 
