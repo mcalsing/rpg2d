@@ -10,7 +10,7 @@ public class Orc extends Entity {
   public Orc(GamePanel gp) {
     super(gp);
 
-    name = "Bat";
+    name = "Orc";
     speed = 1;
     //maxLife = 4;
     //life = maxLife;

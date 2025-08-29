@@ -34,10 +34,11 @@ public class GamePanel extends JPanel implements Runnable{
   // System
   TileManager tileM = new TileManager(this);
   KeyHandler keyH = new KeyHandler();
+
   Thread gameThread;
-  public CollisionChecker cChecker = new CollisionChecker(this);
   public AssetSetter aSetter = new AssetSetter(this);
   public EventHandler eHandler = new EventHandler(this);
+  public CollisionChecker cChecker = new CollisionChecker(this, eHandler); //AQUIIII
 
   // Entity and objects
   public Player player = new Player(this,keyH);

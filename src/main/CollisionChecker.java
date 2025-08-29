@@ -7,9 +7,11 @@ import java.awt.*;
 public class CollisionChecker {
 
   GamePanel gp;
+  EventHandler eventHandler;
 
-  public CollisionChecker(GamePanel gp) {
+  public CollisionChecker(GamePanel gp, EventHandler eventHandler) {
     this.gp = gp;
+    this.eventHandler = eventHandler;
   }
 
   public void checkTile(Entity entity) {
@@ -157,11 +159,10 @@ public class CollisionChecker {
         }
 
         if (entityArea.intersects(targetArea)) {
-          //if (targetArea != entity) {
-
-          //}
-          entity.collisionOn = true;
-          index = i;
+          eventHandler.teleport(3, 8, 11);
+          break;
+          //entity.collisionOn = true;
+          //index = i;
         }
       }
     }

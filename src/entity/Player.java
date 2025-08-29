@@ -118,7 +118,7 @@ public class Player extends Entity {
         }
       }
 
-      //Sprite Changer. A cada 13 frames troca de sprite
+      //Sprite Changer. A cada 12 frames troca de sprite
       spriteCounter++;
       if (spriteCounter > 12) {
         if (spriteNum == 1) {
