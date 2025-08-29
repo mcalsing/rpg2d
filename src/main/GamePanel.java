@@ -155,7 +155,10 @@ public class GamePanel extends JPanel implements Runnable {
     if (playerWon) {
       // Remover monstro derrotado do mapa original
       removeMonsterFromMap(battleMonster);
-      System.out.println("Você venceu a batalha!");
+      System.out.println("You won the battle!");
+    } else {
+      removeMonsterFromMap(battleMonster);
+      System.out.println("You were defeated!");
     }
 
     // Usar o eventHandler para voltar ao mapa anterior
@@ -186,22 +189,26 @@ public class GamePanel extends JPanel implements Runnable {
 //    }
 
     // Lógica de entrada para batalha por turnos
-    if (keyH.enterPressed) {
+    if (keyH.attackPressed) {
       battle.processTurn("ATTACK");
-      keyH.enterPressed = false;
+      battle.processTurn("ATTACK");
+      keyH.attackPressed = false;
     }
 
     if (keyH.defendPressed) {
+      battle.processTurn("DEFEND");
       battle.processTurn("DEFEND");
       keyH.defendPressed = false;
     }
 
     if (keyH.escapePressed) {
       battle.processTurn("FLEE");
+      battle.processTurn("FLEE");
       keyH.escapePressed = false;
     }
 
     if (keyH.magicPressed) {
+      battle.processTurn("MAGIC");
       battle.processTurn("MAGIC");
       keyH.magicPressed = false;
     }
@@ -260,7 +267,7 @@ public class GamePanel extends JPanel implements Runnable {
 
   private void drawBattleScreen(Graphics2D g2) {
     // Fundo de batalha
-    g2.setColor(new Color(0, 0, 100)); // Azul escuro
+    g2.setColor(new Color(50, 50, 35));
     g2.fillRect(0, 0, screenWidth, screenHeight);
 
     // Desenhar o monstro
@@ -284,21 +291,41 @@ public class GamePanel extends JPanel implements Runnable {
     g2.setFont(new Font("Arial", Font.BOLD, 16));
 
     if (battleMonster != null) {
-      g2.drawString("Você encontrou: " + battleMonster.name, 20, screenHeight - 80);
-      g2.drawString("HP: " + battleMonster.hp + "/" + battleMonster.maxHp, 20, screenHeight - 60);
+      //g2.drawString("Você encontrou: " + battleMonster.name, 20, screenHeight - 80);
+      //g2.drawString("HP: " + battleMonster.hp + "/" + battleMonster.maxHp, 20, screenHeight - 60);
+      g2.setColor(Color.RED);
+      g2.fillRect(screenWidth - 290, screenHeight - 515, 100, 20);
+      g2.setColor(Color.GREEN);
+      g2.fillRect(screenWidth - 290, screenHeight - 515,
+              (int)(100 * ((double)battleMonster.hp / battleMonster.maxHp)), 20);
+
+      g2.setColor(Color.BLACK);
+      g2.drawString("HP: " + battleMonster.hp + "/" + battleMonster.maxHp, screenWidth - 275, screenHeight - 500);
     }
 
-    g2.drawString("Pressione ENTER para atacar", 20, screenHeight - 40);
-    g2.drawString("ESC para fugir", 20, screenHeight - 20);
+    g2.drawString("(R) - Ataque Mágico", 20, screenHeight - 75 );
+    g2.drawString("(E) - Ataque Básico", 20, screenHeight - 55);
+    g2.drawString("(W) - Aumentar Defesa", 20, screenHeight - 35);
+    g2.drawString("(Q) - Tentar Fugir", 20, screenHeight - 15 );
 
     // Barra de HP do jogador
     g2.setColor(Color.RED);
-    g2.fillRect(screenWidth - 150, screenHeight - 80, 100, 15);
+    g2.fillRect(screenWidth - 620, screenHeight - 185, 100, 20);
     g2.setColor(Color.GREEN);
-    g2.fillRect(screenWidth - 150, screenHeight - 80,
-            (int)(100 * ((double)player.hp / player.maxHp)), 15);
+    g2.fillRect(screenWidth - 620, screenHeight - 185,
+            (int)(100 * ((double)player.hp / player.maxHp)), 20);
 
     g2.setColor(Color.BLACK);
-    g2.drawString("HP: " + player.hp + "/" + player.maxHp, screenWidth - 150, screenHeight - 60);
+    g2.drawString("HP: " + player.hp + "/" + player.maxHp, screenWidth - 610, screenHeight - 170);
+
+    // Barra de Mana do jogador
+    g2.setColor(Color.GRAY);
+    g2.fillRect(screenWidth - 620, screenHeight - 164, 100, 20);
+    g2.setColor(Color.BLUE);
+    g2.fillRect(screenWidth - 620, screenHeight - 164,
+            (int)(100 * ((double)player.mana / player.maxMana)), 20);
+
+    g2.setColor(Color.BLACK);
+    g2.drawString("MP: " + player.mana + "/" + player.maxMana, screenWidth - 610, screenHeight - 149);
   }
 }

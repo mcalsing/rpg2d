@@ -30,8 +30,14 @@ public class Player extends Entity {
     screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
     name = "Player";
+    maxHp = 40;
+    hp = 40;
+    agility = 10;
+    strength = 10;
+    maxMana = 20;
+    mana = 20;
 
-    // Area de colisão do jogador 32x32 ao invés de 48x48
+    // Area de colisão do jogador 46x46 ao invés de 48x48
     solidArea = new Rectangle();
     solidArea.x = 1; // 1
     solidArea.y = 1; // 1

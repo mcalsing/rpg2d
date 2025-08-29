@@ -12,8 +12,10 @@ public class Bat extends Entity {
 
     name = "Bat";
     speed = 1;
-    int maxHp = 4;
-    int life = maxHp;
+    maxHp = 10;
+    hp = 10;
+    agility = 8;
+    strength = 4;
 
     solidArea.x = 0; // 3
     solidArea.y = 0; // 18

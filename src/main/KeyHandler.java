@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
   public boolean upPressed, downPressed, leftPressed, rightPressed;
-  public boolean enterPressed = false;
+  public boolean attackPressed = false;
   public boolean defendPressed = false;
   public boolean magicPressed = false;
   public boolean escapePressed = false;
@@ -22,16 +22,16 @@ public class KeyHandler implements KeyListener {
   public void keyPressed(KeyEvent e) {
     int code = e.getKeyCode();
 
-    if (code == KeyEvent.VK_W) upPressed = true;
-    if (code == KeyEvent.VK_S) downPressed = true;
-    if (code == KeyEvent.VK_A) leftPressed = true;
-    if (code == KeyEvent.VK_D) rightPressed = true;
+    if (code == KeyEvent.VK_UP) upPressed = true;
+    if (code == KeyEvent.VK_DOWN) downPressed = true;
+    if (code == KeyEvent.VK_LEFT) leftPressed = true;
+    if (code == KeyEvent.VK_RIGHT) rightPressed = true;
 
     // Teclas de batalha
-    if (code == KeyEvent.VK_ENTER) enterPressed = true;
-    if (code == KeyEvent.VK_D) defendPressed = true;
-    if (code == KeyEvent.VK_M) magicPressed = true;
-    if (code == KeyEvent.VK_ESCAPE) escapePressed = true;
+    if (code == KeyEvent.VK_R) magicPressed = true;
+    if (code == KeyEvent.VK_E) attackPressed = true;
+    if (code == KeyEvent.VK_W) defendPressed = true;
+    if (code == KeyEvent.VK_Q) escapePressed = true;
 
     //Debug
     if (code == KeyEvent.VK_T) {
@@ -47,15 +47,15 @@ public class KeyHandler implements KeyListener {
   public void keyReleased(KeyEvent e) {
     int code = e.getKeyCode();
 
-    if (code == KeyEvent.VK_W) upPressed = false;
-    if (code == KeyEvent.VK_S) downPressed = false;
-    if (code == KeyEvent.VK_A) leftPressed = false;
-    if (code == KeyEvent.VK_D) rightPressed = false;
+    if (code == KeyEvent.VK_UP) upPressed = false;
+    if (code == KeyEvent.VK_DOWN) downPressed = false;
+    if (code == KeyEvent.VK_LEFT) leftPressed = false;
+    if (code == KeyEvent.VK_RIGHT) rightPressed = false;
 
     // Teclas de batalha
-    if (code == KeyEvent.VK_ENTER) enterPressed = false;
-    if (code == KeyEvent.VK_D) defendPressed = false;
-    if (code == KeyEvent.VK_M) magicPressed = false;
-    if (code == KeyEvent.VK_ESCAPE) escapePressed = false;
+    if (code == KeyEvent.VK_R) magicPressed = false;
+    if (code == KeyEvent.VK_E) attackPressed = false;
+    if (code == KeyEvent.VK_W) defendPressed = false;
+    if (code == KeyEvent.VK_Q) escapePressed = false;
   }
 }

@@ -5,6 +5,7 @@ import entity.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Random;
 
 public class Battle {
   private final GamePanel gp;
@@ -52,48 +53,38 @@ public class Battle {
     Entity attacker = turnOrder.get(currentTurn);
 
     if (attacker == player) {
+      switch (action) {
+        case "ATTACK": attack(player, monster); break;
+        case "DEFEND": defend(attacker); break;
+        case "FLEE":
+          if (flee(attacker)) {
+            gp.endBattle(false);
+            return;
+          }
+          break;
+        case "MAGIC": useMagic(player, monster); break;
+      }
+    } else {
 
-    }
+      // É sorteado um numero de 1 a 3 para ser a escolha do ataque do monstro
+      Random random = new Random();
+      int i = random.nextInt(3)+1;
 
-    switch (action) {
-      case "ATTACK":
-        if (attacker == player) {
-          attack(player, monster);
-        } else {
-          attack(monster, player);
-        }
-        break;
-
-      case "DEFEND":
-        defend(attacker);
-        break;
-
-      case "FLEE":
-        if (flee(attacker)) {
-          gp.endBattle(false);
-          return;
-        }
-        break;
-
-      case "MAGIC":
-        if (attacker == player) {
-          useMagic(player, monster);
-        } else {
-          // Monsters can have specific magic
-          attack(monster, player);
-        }
-        break;
+      if (i == 1) attack(monster, player);
+      if (i == 2) attack(monster, player);
+      if (i == 3) defend(attacker);
+      //if (i == 4) useMagic(monster, player);
     }
 
     // Check if battle ended
     if (player.hp <= 0) {
-      System.out.println("You were defeated!");
+      //System.out.println("You were defeated!");
       gp.endBattle(false);
       return;
     }
 
     if (monster.hp <= 0) {
-      System.out.println("You won the battle!");
+      //System.out.println("You won the battle!");
       gp.endBattle(true);
       return;
     }
@@ -148,10 +139,12 @@ public class Battle {
       target.hp -= damage;
 
       System.out.println(attacker.name + " uses magic on " + target.name + " causing " + damage + " damage!");
-    } else {
-      System.out.println("Not enough mana!");
-      attack(attacker, target); // Attack normally
     }
+    // Se usar ataque magico sem mana, perde o turmo
+//    else {
+//      System.out.println("Not enough mana!");
+//      attack(attacker, target); // Attack normally
+//    }
   }
 
   public Entity getPlayer() { return player; }
