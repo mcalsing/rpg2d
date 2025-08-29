@@ -32,8 +32,8 @@ public class CollisionChecker {
         entityRightCol = (entityArea.x + entityArea.width) / gp.tileSize;
         entityTopRow   = entityArea.y / gp.tileSize;
 
-        tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-        tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
+        tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
+        tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityTopRow];
 
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
@@ -46,8 +46,8 @@ public class CollisionChecker {
         entityRightCol  = (entityArea.x + entityArea.width) / gp.tileSize;
         entityBottomRow = (entityArea.y + entityArea.height) / gp.tileSize;
 
-        tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-        tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+        tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityBottomRow];
+        tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityBottomRow];
 
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
@@ -60,8 +60,8 @@ public class CollisionChecker {
         entityTopRow    = entityArea.y / gp.tileSize;
         entityBottomRow = (entityArea.y + entityArea.height) / gp.tileSize;
 
-        tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-        tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
+        tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
+        tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityBottomRow];
 
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
@@ -74,8 +74,8 @@ public class CollisionChecker {
         entityTopRow    = entityArea.y / gp.tileSize;
         entityBottomRow = (entityArea.y + entityArea.height) / gp.tileSize;
 
-        tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-        tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+        tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityTopRow];
+        tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityBottomRow];
 
         if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {
           entity.collisionOn = true;
@@ -86,8 +86,8 @@ public class CollisionChecker {
   public int checkObject(Entity entity, boolean player) {
     int index = 999;
 
-    for (int i = 0; i < gp.obj.length; i++) {
-      if (gp.obj[i] != null) {
+    for (int i = 0; i < gp.obj[1].length; i++) {
+      if (gp.obj[gp.currentMap][i] != null) {
 
         // Criar cópia temporária da área sólida da entidade
         Rectangle entityArea = new Rectangle(
@@ -99,10 +99,10 @@ public class CollisionChecker {
 
         // Criar cópia temporária da área sólida do objeto
         Rectangle objectArea = new Rectangle(
-          gp.obj[i].worldX + gp.obj[i].solidArea.x,
-          gp.obj[i].worldY + gp.obj[i].solidArea.y,
-          gp.obj[i].solidArea.width,
-          gp.obj[i].solidArea.height
+          gp.obj[gp.currentMap][i].worldX + gp.obj[gp.currentMap][i].solidArea.x,
+          gp.obj[gp.currentMap][i].worldY + gp.obj[gp.currentMap][i].solidArea.y,
+          gp.obj[gp.currentMap][i].solidArea.width,
+          gp.obj[gp.currentMap][i].solidArea.height
         );
 
         // Checa colisão em cada direção usando apenas a cópia
@@ -114,7 +114,7 @@ public class CollisionChecker {
         }
 
         if (entityArea.intersects(objectArea)) {
-          if (gp.obj[i].collision) {
+          if (gp.obj[gp.currentMap][i].collision) {
             entity.collisionOn = true;
           }
           if (player) {
@@ -127,11 +127,11 @@ public class CollisionChecker {
   }
 
   //Colisao do jogador com NPC ou monstro
-  public int checkEntity(Entity entity, Entity[] target) {
+  public int checkEntity(Entity entity, Entity[][] target) {
     int index = 999;
 
-    for (int i = 0; i < target.length; i++) {
-      if (target[i] != null) {
+    for (int i = 0; i < target[1].length; i++) {
+      if (target[gp.currentMap][i] != null) {
 
         // Área temporária da entidade
         Rectangle entityArea = new Rectangle(
@@ -143,10 +143,10 @@ public class CollisionChecker {
 
         // Área temporária do target
         Rectangle targetArea = new Rectangle(
-          target[i].worldX + target[i].solidArea.x,
-          target[i].worldY + target[i].solidArea.y,
-          target[i].solidArea.width,
-          target[i].solidArea.height
+          target[gp.currentMap][i].worldX + target[gp.currentMap][i].solidArea.x,
+          target[gp.currentMap][i].worldY + target[gp.currentMap][i].solidArea.y,
+          target[gp.currentMap][i].solidArea.width,
+          target[gp.currentMap][i].solidArea.height
         );
 
         switch (entity.directions) {

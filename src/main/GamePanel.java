@@ -25,24 +25,25 @@ public class GamePanel extends JPanel implements Runnable{
   // World Settings
   public final int maxWorldCol = 50;
   public final int maxWorldRow = 50;
-  public final int worldWidth = tileSize * maxWorldCol;
-  public final int worldHeight = tileSize * maxWorldRow;
+  public final int maxMap = 10;
+  public int currentMap = 0;
 
   //FPS
   int FPS = 60;
 
+  // System
   TileManager tileM = new TileManager(this);
   KeyHandler keyH = new KeyHandler();
   Thread gameThread;
-
   public CollisionChecker cChecker = new CollisionChecker(this);
   public AssetSetter aSetter = new AssetSetter(this);
+  public EventHandler eHandler = new EventHandler(this);
 
   // Entity and objects
   public Player player = new Player(this,keyH);
-  public Entity obj[] = new Entity[10];
-  public Entity npc[] = new Entity[10];
-  public Entity monster[] = new Entity[20];
+  public Entity obj[][] = new Entity[maxMap][10];
+  public Entity npc[][] = new Entity[maxMap][10];
+  public Entity monster[][] = new Entity[maxMap][20];
   ArrayList<Entity> entityList = new ArrayList<>();
 
   public GamePanel() {
@@ -105,16 +106,16 @@ public class GamePanel extends JPanel implements Runnable{
     player.update();
 
     //NPC
-    for (int i = 0; i < npc.length; i++) {
-      if (npc[i] != null) {
-        npc[i].update();
+    for (int i = 0; i < npc[1].length; i++) {
+      if (npc[currentMap][i] != null) {
+        npc[currentMap][i].update();
       }
     }
 
     //Monster
-    for (int i = 0; i < monster.length; i++) {
-      if (monster[i] != null) {
-        monster[i].update();
+    for (int i = 0; i < monster[1].length; i++) {
+      if (monster[currentMap][i] != null) {
+        monster[currentMap][i].update();
       }
     }
   }
@@ -125,7 +126,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     //Debug
     long drawStart = 0;
-    if (keyH.checkDrawTime) drawStart = System.nanoTime();
+    if (keyH.showDebugText) drawStart = System.nanoTime();
 
     //Tile
     tileM.draw(g2);
@@ -134,23 +135,23 @@ public class GamePanel extends JPanel implements Runnable{
     entityList.add(player);
 
     //NPC
-    for (int i = 0; i < npc.length; i++) {
-      if (npc[i] != null) {
-        entityList.add(npc[i]);
+    for (int i = 0; i < npc[1].length; i++) {
+      if (npc[currentMap][i] != null) {
+        entityList.add(npc[currentMap][i]);
       }
     }
 
     //Object
-    for (int i = 0; i < obj.length; i++) {
-      if (obj[i] != null) {
-        entityList.add(obj[i]);
+    for (int i = 0; i < obj[1].length; i++) {
+      if (obj[currentMap][i] != null) {
+        entityList.add(obj[currentMap][i]);
       }
     }
 
     //Monster
-    for (int i = 0; i < monster.length; i++) {
-      if (monster[i] != null) {
-        entityList.add(monster[i]);
+    for (int i = 0; i < monster[1].length; i++) {
+      if (monster[currentMap][i] != null) {
+        entityList.add(monster[currentMap][i]);
       }
     }
 
@@ -175,12 +176,20 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     //Debug
-    if (keyH.checkDrawTime) {
+    if (keyH.showDebugText) {
       long drawEnd = System.nanoTime();
       long passed = drawEnd - drawStart;
+
       g2.setColor(Color.white);
-      g2.drawString("Draw Time: " + passed, 10, 400);
-      System.out.println("Draw Time: " +passed);
+      int x = 10;
+      //int y = 400;
+      int lineHeight = 20;
+
+      g2.drawString("WorldX: " + player.worldX, x, 400);
+      g2.drawString("WorldY: " + player.worldY, x, 420);
+      g2.drawString("Col: " + (player.worldX + player.solidArea.x) / tileSize, x, 440);
+      g2.drawString("Row: " + (player.worldY + player.solidArea.y) / tileSize, x, 460);
+      g2.drawString("Draw Time: " + passed, x, 480);
     }
 
     g2.dispose();

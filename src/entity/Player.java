@@ -31,20 +31,20 @@ public class Player extends Entity {
 
     // Area de colisão do jogador 32x32 ao invés de 48x48
     solidArea = new Rectangle();
-    solidArea.x = 1;
-    solidArea.y = 1;
+    solidArea.x = 1; // 1
+    solidArea.y = 1; // 1
     solidAreaDefaultX = solidArea.x;
     solidAreaDefaultY = solidArea.y;
-    solidArea.width = 46;
-    solidArea.height = 46;
+    solidArea.width = 46; // 46
+    solidArea.height = 46; //46
 
     setDefaultValues();
     getPlayerImage();
   }
 
   public void setDefaultValues() {
-    worldX = gp.tileSize * 23;
-    worldY = gp.tileSize * 21;
+    worldX = gp.tileSize * 19;
+    worldY = gp.tileSize * 40;
     speed = 4;
     directions = "down";
   }
@@ -103,6 +103,9 @@ public class Player extends Entity {
     // Check monster collision
     int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
 
+    // Check event
+    gp.eHandler.checkEvent();
+
     if (moving) {
 
       // If collision is false, player can move
@@ -138,17 +141,17 @@ public class Player extends Entity {
   public void pickUpObject(int i) {
 
     if (i != 999) {
-      String objectName = gp.obj[i].name;
+      String objectName = gp.obj[gp.currentMap][i].name;
 
       switch (objectName) {
         case "Key":
           hasKey++;
-          gp.obj[i] = null;
+          gp.obj[gp.currentMap][i] = null;
           System.out.println("Key: " +hasKey);
           break;
         case "Door":
           if (hasKey > 0) {
-            gp.obj[i] = null;
+            gp.obj[gp.currentMap][i] = null;
             hasKey--;
           }
           System.out.println("Key: " +hasKey);
