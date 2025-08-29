@@ -102,6 +102,7 @@ public class Player extends Entity {
 
     // Check monster collision
     int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
+    contactMonster(monsterIndex);
 
     // Check event
     gp.eHandler.checkEvent();
@@ -162,9 +163,39 @@ public class Player extends Entity {
 
   public void interactNPC(int i) {
     if (i != 999) {
+      Entity npc = gp.npc[gp.currentMap][i];
+      System.out.println("Você está falando com: " + npc.getName());
       //System.out.println("You are hitting a npc");
     }
   }
+
+  public void contactMonster(int i) {
+
+    if (i != 999) {
+      // Verificar se o array existe
+      if (gp.monster[gp.currentMap] == null) {
+        System.out.println("Array de monstros é null!");
+        return;
+      }
+
+      // Verificar se o monstro existe no índice
+      if (gp.monster[gp.currentMap][i] == null) {
+        System.out.println("Monstro no índice " + i + " é null!");
+        return;
+      }
+
+      Entity monster = gp.monster[gp.currentMap][i];
+
+      // Verificar se o nome do monstro existe
+      if (monster.name == null) {
+        System.out.println("Nome do monstro é null!");
+        return;
+      }
+
+      System.out.println("Você encontrou um: " + monster.name);
+    }
+  }
+
 
   public void draw(Graphics2D g2) {
     BufferedImage image = null;

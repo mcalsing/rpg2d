@@ -4,56 +4,59 @@ import entity.Entity;
 import entity.Player;
 import tile.TileManager;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel implements Runnable {
 
-  // Screen Settings
-  final int originalTilesSize = 16; // 16x16 tile
+  // Configurações de tela
+  final int originalTileSize = 16; // 16x16 tile padrão
   final int scale = 3;
-  
-  public final int tileSize = originalTilesSize * scale; //48x48
+  public final int tileSize = originalTileSize * scale; // 48x48
   public final int maxScreenCol = 16;
   public final int maxScreenRow = 12;
-  public final int screenWidth = tileSize * maxScreenCol; // 768px
-  public final int screenHeight = tileSize * maxScreenRow; // 576px
+  public final int screenWidth = tileSize * maxScreenCol; // 768 px
+  public final int screenHeight = tileSize * maxScreenRow; // 576 px
 
-  // World Settings
+  // Configurações do mundo
   public final int maxWorldCol = 50;
   public final int maxWorldRow = 50;
   public final int maxMap = 10;
   public int currentMap = 0;
 
-  //FPS
+  // FPS
   int FPS = 60;
 
-  // System
+  // Sistema
   TileManager tileM = new TileManager(this);
   KeyHandler keyH = new KeyHandler();
-
-  Thread gameThread;
-  public AssetSetter aSetter = new AssetSetter(this);
   public EventHandler eHandler = new EventHandler(this);
-  public CollisionChecker cChecker = new CollisionChecker(this, eHandler); //AQUIIII
+  public CollisionChecker cChecker = new CollisionChecker(this, eHandler);
+  public AssetSetter aSetter = new AssetSetter(this);
+  Thread gameThread;
 
-  // Entity and objects
-  public Player player = new Player(this,keyH);
-  public Entity obj[][] = new Entity[maxMap][10];
+  // Entidades
+  public Player player = new Player(this, keyH);
+  public Entity obj[][] = new Entity[maxMap][20];
   public Entity npc[][] = new Entity[maxMap][10];
   public Entity monster[][] = new Entity[maxMap][20];
   ArrayList<Entity> entityList = new ArrayList<>();
 
+  // Estado do jogo
+  public int gameState;
+  public final int titleState = 0;
+  public final int playState = 1;
+  public final int pauseState = 2;
+  public final int dialogState = 3;
+  public final int characterState = 4;
+
   public GamePanel() {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-    this.setBackground(Color.BLACK);
-    // Game Rendering performance
+    this.setBackground(Color.black);
     this.setDoubleBuffered(true);
-
-    //Movimentação do personagem
     this.addKeyListener(keyH);
     this.setFocusable(true);
   }
@@ -62,28 +65,30 @@ public class GamePanel extends JPanel implements Runnable{
     aSetter.setObjects();
     aSetter.setNPC();
     aSetter.setMonster();
+
+    System.out.println("Monstros no mapa 0:");
+    for (int i = 0; i < monster[0].length; i++) {
+      if (monster[0][i] != null) {
+        System.out.println("Índice " + i + ": " + monster[0][i].getClass().getSimpleName());
+      }
+    }
+
   }
 
-  //
   public void startGameThread() {
     gameThread = new Thread(this);
     gameThread.start();
   }
 
-  //Função Loop
   @Override
   public void run() {
-    double drawInterval = (double) 1000000000/FPS; // 0.01666 seconds
+    double drawInterval = 1000000000.0 / FPS; // 0.01666 segundos
     double delta = 0;
     long lastTime = System.nanoTime();
     long currentTime;
-    long timer = 0;
-    int drawCount = 0;
 
     while (gameThread != null) {
-
       currentTime = System.nanoTime();
-      timer += (currentTime - lastTime);
       delta += (currentTime - lastTime) / drawInterval;
       lastTime = currentTime;
 
@@ -91,89 +96,37 @@ public class GamePanel extends JPanel implements Runnable{
         update();
         repaint();
         delta--;
-        drawCount++;
-
-      }
-      if (timer >= 1000000000) {
-        System.out.println("FPS: " +drawCount);
-        drawCount = 0;
-        timer = 0;
       }
     }
   }
 
   public void update() {
-    //Player
     player.update();
 
-    //NPC
-    for (int i = 0; i < npc[1].length; i++) {
-      if (npc[currentMap][i] != null) {
-        npc[currentMap][i].update();
-      }
-    }
-
-    //Monster
-    for (int i = 0; i < monster[1].length; i++) {
+    for (int i = 0; i < monster[currentMap].length; i++) {
       if (monster[currentMap][i] != null) {
         monster[currentMap][i].update();
       }
     }
   }
 
+  @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    Graphics2D g2 = (Graphics2D)g;
+    Graphics2D g2 = (Graphics2D) g;
 
-    //Debug
+    //debug
     long drawStart = 0;
     if (keyH.showDebugText) drawStart = System.nanoTime();
 
-    //Tile
     tileM.draw(g2);
 
-    //Add entities to the list
-    entityList.add(player);
+    // Entidades organizadas
+    buildEntityList();
+    Collections.sort(entityList, Comparator.comparingInt(e -> e.worldY));
 
-    //NPC
-    for (int i = 0; i < npc[1].length; i++) {
-      if (npc[currentMap][i] != null) {
-        entityList.add(npc[currentMap][i]);
-      }
-    }
-
-    //Object
-    for (int i = 0; i < obj[1].length; i++) {
-      if (obj[currentMap][i] != null) {
-        entityList.add(obj[currentMap][i]);
-      }
-    }
-
-    //Monster
-    for (int i = 0; i < monster[1].length; i++) {
-      if (monster[currentMap][i] != null) {
-        entityList.add(monster[currentMap][i]);
-      }
-    }
-
-    // Sort
-    Collections.sort(entityList, new Comparator<Entity>() {
-      @Override
-      public int compare(Entity e1, Entity e2) {
-
-        int result = Integer.compare(e1.worldY, e2.worldX);
-        return result;
-      }
-    });
-
-    // Draw Entities
-    for(int i = 0; i < entityList.size(); i++) {
-      entityList.get(i).draw(g2);
-    }
-
-    // Empty entity list
-    for(int i = 0; i < entityList.size(); i++) {
-      entityList.remove(i);
+    for (Entity entity : entityList) {
+      entity.draw(g2);
     }
 
     //Debug
@@ -195,15 +148,13 @@ public class GamePanel extends JPanel implements Runnable{
 
     g2.dispose();
   }
+
+  private void buildEntityList() {
+    entityList.clear();
+    entityList.add(player);
+
+    for (Entity e : npc[currentMap]) if (e != null) entityList.add(e);
+    for (Entity e : obj[currentMap]) if (e != null) entityList.add(e);
+    for (Entity e : monster[currentMap]) if (e != null) entityList.add(e);
+  }
 }
-
-
-
-
-
-
-
-
-
-
-

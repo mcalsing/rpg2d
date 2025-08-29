@@ -3,6 +3,7 @@ package main;
 import entity.Entity;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class CollisionChecker {
 
@@ -88,7 +89,7 @@ public class CollisionChecker {
   public int checkObject(Entity entity, boolean player) {
     int index = 999;
 
-    for (int i = 0; i < gp.obj[1].length; i++) {
+    for (int i = 0; i < gp.obj[gp.currentMap].length; i++) {
       if (gp.obj[gp.currentMap][i] != null) {
 
         // Criar cópia temporária da área sólida da entidade
@@ -132,7 +133,7 @@ public class CollisionChecker {
   public int checkEntity(Entity entity, Entity[][] target) {
     int index = 999;
 
-    for (int i = 0; i < target[1].length; i++) {
+    for (int i = 0; i < target[gp.currentMap].length; i++) {
       if (target[gp.currentMap][i] != null) {
 
         // Área temporária da entidade
@@ -159,10 +160,10 @@ public class CollisionChecker {
         }
 
         if (entityArea.intersects(targetArea)) {
-          eventHandler.teleport(3, 8, 11);
+          //eventHandler.teleport(3, 8, 11);
+          entity.collisionOn = true;
+          index = i;
           break;
-          //entity.collisionOn = true;
-          //index = i;
         }
       }
     }

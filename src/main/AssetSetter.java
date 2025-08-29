@@ -1,6 +1,7 @@
 package main;
 
 import entity.NPC_OldMan;
+import monster.Bat;
 import monster.Orc;
 import objects.ObjectChest;
 import objects.ObjectDoor;
@@ -52,6 +53,7 @@ public class AssetSetter {
   public void setMonster() {
     int mapNum = 0;
 
+    // Monstros do mapa 0
     gp.monster[mapNum][0] = new Orc(gp);
     gp.monster[mapNum][0].worldX = gp.tileSize * 23;
     gp.monster[mapNum][0].worldY = gp.tileSize * 36;
@@ -59,5 +61,16 @@ public class AssetSetter {
     gp.monster[mapNum][1] = new Orc(gp);
     gp.monster[mapNum][1].worldX = gp.tileSize * 23;
     gp.monster[mapNum][1].worldY = gp.tileSize * 39;
+
+    gp.monster[mapNum][2] = new Bat(gp);
+    gp.monster[mapNum][2].worldX = gp.tileSize * 25;
+    gp.monster[mapNum][2].worldY = gp.tileSize * 40;
+
+    mapNum = 1;
+    // Monstros do mapa 1
+    gp.monster[mapNum][0] = new Orc(gp);
+    gp.monster[mapNum][0].worldX = gp.tileSize * 19;
+    gp.monster[mapNum][0].worldY = gp.tileSize * 36;
+
   }
 }

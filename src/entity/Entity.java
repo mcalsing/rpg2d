@@ -26,6 +26,10 @@ public class Entity {
   public String name;
   public boolean collision = false;
 
+  public String getName() {
+    return name;
+  }
+
   GamePanel gp;
 
   //Colisão do personagem
